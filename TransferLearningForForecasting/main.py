@@ -15,7 +15,7 @@ def load_config(config_path: str) -> dict:
 
 def main():
     # Load configuration file
-    config = load_config("configs/config.yaml")
+    config = load_config("TransferLearningForForecasting/configs/config.yaml")
 
     # Load the dataframe
     data_path = config["data"]["path"]
