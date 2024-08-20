@@ -3,7 +3,7 @@ name: Run main.py on config.yaml update
 on:
   push:
     paths:
-      - 'TranferLearningForForecasting/configs/config.yaml'
+      - 'TransferLearningForForecasting/configs/config.yaml'
 
 jobs:
   run-main:
@@ -21,8 +21,8 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r TranferLearningTimeSeries/requirements.txt
+          pip install -r TransferLearningForForecasting/requirements.txt
 
       - name: Run main.py
-        run: python TranferLearningTimeSeries/main.py
+        run: python TransferLearningForForecasting/main.py
 
