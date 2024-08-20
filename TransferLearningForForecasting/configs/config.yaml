@@ -1,11 +1,11 @@
 data:
-  path: "TransferLearningTimeSeries/data/workable_retail_data.csv"
+  path: "TransferLearningForForecasting/data/workable_retail_data.csv"
   group_col: "StockCode"
   target_col: "TotalQuantity"
   date_col: "InvoiceDate"
   smoothed_col: "SmoothedTotalQuantity"
   TimeSeriesName_col: "StockCode"
-  prediction_path: "TransferLearningTimeSeries/data/predict_retail_data.csv"  # Specify if prediction is needed
+  prediction_path: "TransferLearningForForecasting/data/predict_retail_data.csv"  # Specify if prediction is needed
 
 preprocessing:
   replace_outliers: true
@@ -14,7 +14,7 @@ preprocessing:
     window_size: 3
 
 model:
-  path: "TransferLearningTimeSeries/models/nbeats_model_m4_t3.pt"
+  path: "TransferLearningForForecasting/models/nbeats_model_m4_t3.pt"
   horizon: 72 
   test_forecast_length: 12
   forecast_length: 12
@@ -33,6 +33,6 @@ model:
 
 
 output:
-  prediction_save_path: "TranferLearningTimeSeries/results/predictions.csv"
-  scaler_save_path: "TranferLearningTimeSeries/models/scaler.pkl"  # Path to save the scaler info
-  fine_tune_model_save_path: "TranferLearningTimeSeries/models/fine_tune_TF.pt"
+  prediction_save_path: "TransferLearningForForecasting/results/predictions.csv"
+  scaler_save_path: "TransferLearningForForecasting/models/scaler.pkl"  # Path to save the scaler info
+  fine_tune_model_save_path: "TransferLearningForForecasting/models/fine_tune_TF.pt"
