@@ -1,4 +1,4 @@
 pandas
 numpy
 darts
-sklearn
+scikit-learn
