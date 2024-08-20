@@ -105,4 +105,20 @@ def create_time_series(df: pd.DataFrame, date_col: str, value_col: str, TimeSeri
     return all_series
 
 
+def scale_series_train(train_series: List[TimeSeries]) -> Tuple[List[TimeSeries], Scaler]:
+    """
+    Scales the time series data using MaxAbsScaler.
+    
+    Args:
+        train_series (List[TimeSeries]): Training time series.
+    
+    Returns:
+        Tuple: Scaled training  along with the scaler object.
+    """
+    scaler = Scaler(scaler=MaxAbsScaler())
+    train_scaled = scaler.fit_transform(train_series)
+    train_scaled = convert_timeseries_to_float32(train_scaled)
+
+    return train_scaled, scaler
+
 

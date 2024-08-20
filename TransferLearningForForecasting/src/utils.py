@@ -1,4 +1,11 @@
 import pandas as pd
+import tqdm as tq
+import matplotlib.pyplot as plt
+import numpy as np
+from darts import TimeSeries
+from darts.metrics import smape
+from typing import List, Tuple
+ 
 
 def ensure_datetime(df: pd.DataFrame, date_col: str) -> pd.DataFrame:
     """
@@ -36,3 +43,12 @@ def validate_config(df: pd.DataFrame, config: dict):
     for col in required_columns:
         if col not in df.columns:
             raise ValueError(f"Required column '{col}' is missing from the DataFrame.")
+        
+def eval_forecasts(pred_series: List[TimeSeries], 
+                   test_series: List[TimeSeries]) -> List[float]:
+  
+    print('computing sMAPEs...')
+    smapes = smape(test_series, pred_series)
+    mean, std = np.round(np.mean(smapes),4), np.round(np.std(smapes),4)
+    print('Avg sMAPE: %.3f +- %.3f' % (mean, std))
+    return smapes

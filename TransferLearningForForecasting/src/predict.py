@@ -2,110 +2,85 @@
 
 import pandas as pd
 import joblib
+import yaml
+import numpy as np
 from darts import TimeSeries
 from src.data_processing import replace_outliers, apply_smoothing, create_time_series, scale_series
 from src.model import load_model
 
-def load_prediction_data(file_path: str, config: dict) -> pd.DataFrame:
-    """
-    Load and preprocess prediction data.
+def load_config(config_path: str) -> dict:
+    with open(config_path, "r") as file:
+        config = yaml.safe_load(file)
+    return config
 
-    Args:
-        file_path (str): Path to the new dataset for prediction.
-        config (dict): Configuration dictionary.
+config = load_config("configs/config.yaml")
 
-    Returns:
-        pd.DataFrame: Preprocessed prediction dataframe.
-    """
-    df = pd.read_csv(file_path)
 
-    # Extract configuration values
-    group_col = config["data"]["group_col"]
-    target_col = config["data"]["target_col"]
-    date_col = config["data"]["date_col"]
-    smoothed_col = config["data"].get("smoothed_col", "SmoothedTotalQuantity")
-
-    # Preprocessing steps based on config
-    if config["preprocessing"]["replace_outliers"]:
-        df = replace_outliers(df, group_col=group_col, target_col=target_col)
-
-    if config["preprocessing"]["smoothing"]["apply"]:
-        window_size = config["preprocessing"]["smoothing"].get("window_size", 3)
-        df = apply_smoothing(df, group_col=group_col, target_col=target_col, smoothed_col=smoothed_col, window_size=window_size)
-
-    return df
-
-def get_forecasts(model, series_list: list, horizon: int) -> list:
+def get_forecasts(model, series_list: list, series_names: list, horizon: int) -> list:
     """
     Generate forecasts using the trained model.
 
     Args:
         model: The trained Darts model.
         series_list (list): List of TimeSeries objects for prediction.
+        series_names (list): List of series names corresponding to the TimeSeries objects.
         horizon (int): Forecasting horizon.
 
     Returns:
-        list: List of predicted TimeSeries.
+        list: List of tuples where each tuple contains the predicted TimeSeries and its name.
     """
-    forecasts = [model.predict(n=horizon, series=s) for s in series_list]
-    return forecasts
+    forecasts = model.predict(series=series_list, n=horizon)
+    return list(zip(forecasts, series_names))
 
 def inverse_scale_forecasts(forecasts: list, scaler) -> list:
     """
     Apply inverse scaling to the forecasts.
 
     Args:
-        forecasts (list): List of forecasted TimeSeries.
+        forecasts (list): List of tuples where each tuple contains a forecasted TimeSeries and its name.
         scaler: Scaler object used for scaling the data.
 
     Returns:
-        list: List of unscaled TimeSeries.
+        list: List of tuples where each tuple contains the unscaled TimeSeries and its name.
     """
-    return [scaler.inverse_transform(forecast) for forecast in forecasts]
+    return [(scaler.inverse_transform(forecast), series_name) for forecast, series_name in forecasts]
 
 def save_forecasts(forecasts: list, config: dict):
     """
     Save the forecasts to a CSV file.
 
     Args:
-        forecasts (list): List of forecasted TimeSeries.
+        forecasts (list): List of tuples where each tuple contains the forecasted TimeSeries and its name.
         config (dict): Configuration dictionary.
     """
     save_path = config["output"]["prediction_save_path"]
-    df_list = [forecast.pd_dataframe().reset_index() for forecast in forecasts]
+    
+    # Extract forecasts and series names from the tuples
+    df_list = []
+    for forecast, series_name in forecasts:
+        df = forecast.pd_dataframe().reset_index()
+        df["Series_Name"] = series_name  # Add the series name column
+        df_list.append(df)
+    
     final_df = pd.concat(df_list, ignore_index=True)
     final_df.to_csv(save_path, index=False)
     print(f"Forecasts saved to {save_path}")
 
-def run_prediction(config: dict):
+def run_prediction(pred_series,series_name,config: dict):
     """
     Main function to run the prediction workflow.
 
     Args:
         config (dict): Configuration dictionary.
     """
-    # Load and preprocess prediction data
-    pred_data_path = config["data"]["prediction_path"]
-    pred_df = load_prediction_data(pred_data_path, config)
-
-    # Create time series
-    group_col = config["data"]["group_col"]
-    smoothed_col = config["data"]["smoothed_col"]
-    date_col = config["data"]["date_col"]
-    TimeSeriesName_col = config["data"]["TimeSeriesName_col"]
-    min_size = config["model"]["min_size"]
-
-    pred_series = create_time_series(
-        pred_df, date_col=date_col, value_col=smoothed_col, TimeSeriesName_col=TimeSeriesName_col, group_col=group_col, min_size=min_size
-    )
 
     # Load the model
-    model_path = config["model"]["path"]
+    model_path = config["output"]["fine_tune_model_save_path"]
     model = load_model(model_path, config["model"])
 
     # Generate forecasts
     horizon = config["model"]["horizon"]
-    forecasts = get_forecasts(model, pred_series, horizon)
+    forecasts = get_forecasts(model, pred_series, series_name, horizon)
 
     # Inverse scale the forecasts if scaling was applied
     if config["model"]["scale"]:

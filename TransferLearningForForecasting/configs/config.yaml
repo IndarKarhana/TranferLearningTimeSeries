@@ -14,8 +14,10 @@ preprocessing:
     window_size: 3
 
 model:
-  path: "models/nbeats_model_m4_t2.pt"
+  path: "models/nbeats_model_m4_t3.pt"
   horizon: 72 
+  test_forecast_length: 12
+  forecast_length: 12
   min_size: 60
   epochs: 5
   input_chunk_length: 40
@@ -23,12 +25,14 @@ model:
   img_dim1: 20
   img_dim2: 10
   verbose: true
-  device: "mps"  # Options: "cpu", "gpu", "tpu", "mps"
+  device: "cpu"  # Options: "cpu", "gpu", "tpu", "mps"
   pl_trainer_kwargs:
-    accelerator: "mps"
-  retrain: true  # Set to true if retraining is required
+    accelerator: "cpu"
+  retrain: false  # Set to true if retraining is required
   scale: true  # Set to true if scaling is applied
+
 
 output:
   prediction_save_path: "results/predictions.csv"
   scaler_save_path: "models/scaler.pkl"  # Path to save the scaler
+  fine_tune_model_save_path: "models/fine_tune_TF.pt"
