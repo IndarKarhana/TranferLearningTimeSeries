@@ -13,7 +13,7 @@ def load_config(config_path: str) -> dict:
         config = yaml.safe_load(file)
     return config
 
-config = load_config("configs/config.yaml")
+config = load_config("TransferLearningForForecasting/configs/config.yaml")
 
 
 def get_forecasts(model, series_list: list, series_names: list, horizon: int) -> list:
