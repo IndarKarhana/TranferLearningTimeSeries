@@ -17,15 +17,18 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.11.8' # Set the Python version you need
-
-      - name: Cache Python packages
+      
+      - name: Cache pip dependencies
         uses: actions/cache@v3
         with:
+          # Caching location
           path: ~/.cache/pip
+          # Cache key based on the hash of the requirements.txt file
           key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          # Fallback to use when cache is not found
           restore-keys: |
-            ${{ runner.os }}-pip-
-
+            ${{ runner.os }}-pip
+            
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
