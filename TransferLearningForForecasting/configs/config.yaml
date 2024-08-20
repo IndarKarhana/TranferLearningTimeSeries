@@ -28,7 +28,7 @@ model:
   device: "cpu"  # Options: "cpu", "gpu", "tpu", "mps"
   pl_trainer_kwargs:
     accelerator: "cpu"
-  retrain: false  # Set to true if retraining is required
+  retrain: true  # Set to true if retraining is required
   scale: true  # Set to true if scaling is applied
 
 
