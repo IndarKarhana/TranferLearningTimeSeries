@@ -1,0 +1,34 @@
+data:
+  path: "data/workable_retail_data.csv"
+  group_col: "StockCode"
+  target_col: "TotalQuantity"
+  date_col: "InvoiceDate"
+  smoothed_col: "SmoothedTotalQuantity"
+  TimeSeriesName_col: "StockCode"
+  prediction_path: "data/predict_retail_data.csv"  # Specify if prediction is needed
+
+preprocessing:
+  replace_outliers: true
+  smoothing:
+    apply: true
+    window_size: 3
+
+model:
+  path: "models/nbeats_model_m4_t2.pt"
+  horizon: 72 
+  min_size: 60
+  epochs: 5
+  input_chunk_length: 40
+  output_chunk_length: 12
+  img_dim1: 20
+  img_dim2: 10
+  verbose: true
+  device: "mps"  # Options: "cpu", "gpu", "tpu", "mps"
+  pl_trainer_kwargs:
+    accelerator: "mps"
+  retrain: true  # Set to true if retraining is required
+  scale: true  # Set to true if scaling is applied
+
+output:
+  prediction_save_path: "results/predictions.csv"
+  scaler_save_path: "models/scaler.pkl"  # Path to save the scaler
