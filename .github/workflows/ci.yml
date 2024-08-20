@@ -3,7 +3,7 @@ name: Run main.py on config.yaml update
 on:
   push:
     paths:
-      - 'TransferLearningForForecasting/configs/config.yaml'
+      - 'TranferLearningForForecasting/configs/config.yaml'
 
 jobs:
   run-main:
