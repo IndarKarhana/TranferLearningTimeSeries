@@ -71,7 +71,7 @@ def run_prediction(pred_series,series_name,config: dict):
     Main function to run the prediction workflow.
 
     Args:
-        config (dict): Configuration dictionary.
+        config (dict): Configuration dictionary
     """
 
     # Load the model
@@ -82,7 +82,7 @@ def run_prediction(pred_series,series_name,config: dict):
     horizon = config["model"]["horizon"]
     forecasts = get_forecasts(model, pred_series, series_name, horizon)
 
-    # Inverse scale the forecasts if scaling was applied
+    # Inverse scale the forecasts if scaling was applied before to data
     if config["model"]["scale"]:
         # Load the saved scaler (assumed to be saved during training)
         scaler = joblib.load(config["output"]["scaler_save_path"])

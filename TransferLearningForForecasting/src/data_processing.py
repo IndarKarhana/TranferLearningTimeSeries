@@ -25,11 +25,23 @@ def replace_outliers(df: pd.DataFrame, group_col: str, target_col: str, threshol
         mean_val = series.mean()
         std_dev = series.std()
         outliers = abs(series - mean_val) > (threshold * std_dev)
-        series[outliers] = mean_val
-        return series
+        
+        # Debugging output
+        print(f"Group: {series.name}")
+        print(f"Mean: {mean_val}, Std Dev: {std_dev}")
+        print(f"Outliers detected: {series[outliers].values}")
+        
+        # Create a copy to avoid SettingWithCopyWarning
+        new_series = series.copy()
+        new_series.loc[outliers] = mean_val
+        
+        return new_series
 
+    # Apply the function group by group
     df[target_col] = df.groupby(group_col)[target_col].transform(_replace_outliers)
     return df
+
+
 
 def apply_smoothing(df: pd.DataFrame, group_col: str, target_col: str, smoothed_col: str, window_size: int = 3) -> pd.DataFrame:
     """
@@ -104,6 +116,9 @@ def create_time_series(df: pd.DataFrame, date_col: str, value_col: str, TimeSeri
             all_series.append(time_series)
     return all_series
 
+def infer_frequency(dates: pd.DatetimeIndex) -> str:
+    """Infer the frequency of a datetime index."""
+    return pd.infer_freq(dates) or 'D'  # Default to daily if inference fails
 
 def scale_series_train(train_series: List[TimeSeries]) -> Tuple[List[TimeSeries], Scaler]:
     """

@@ -34,5 +34,5 @@ model:
 
 output:
   prediction_save_path: "TransferLearningForForecasting/results/predictions.csv"
-  scaler_save_path: "TransferLearningForForecasting/models/scaler.pkl"  # Path to save the scaler info
+  scaler_save_path: "TransferLearningForForecasting/models/scaler.pkl"  # path to save the scaler info 
   fine_tune_model_save_path: "TransferLearningForForecasting/models/fine_tune_TF.pt"

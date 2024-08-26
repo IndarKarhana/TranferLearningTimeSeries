@@ -51,4 +51,4 @@ def eval_forecasts(pred_series: List[TimeSeries],
     smapes = smape(test_series, pred_series)
     mean, std = np.round(np.mean(smapes),4), np.round(np.std(smapes),4)
     print('Avg sMAPE: %.3f +- %.3f' % (mean, std))
-    return smapes
+    return smapes,mean

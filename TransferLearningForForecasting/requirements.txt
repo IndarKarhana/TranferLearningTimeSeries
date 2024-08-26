@@ -2,3 +2,4 @@ pandas
 numpy
 darts
 scikit-learn
+pytest

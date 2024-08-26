@@ -77,7 +77,11 @@ def main():
         elapsed_time = time.time() - start_time
         test_set = [s[0:config["model"]["test_forecast_length"]] for s in ret_test_scaled]
         print(len(nb_preds[0]),len(test_set[0]))
-        smapes = eval_forecasts(nb_preds, test_set)   
+        smapes,avg_smapes = eval_forecasts(nb_preds, test_set)   
+        smapes, avg_smapes = eval_forecasts(nb_preds, test_set)
+        if avg_smapes < 30:
+            print("Warning: The base model's performance is not optimal smape < 30. Consider revisiting the model.")
+
         #smapes, elapsed_time = eval_local_model(ret_train_scaled, ret_test_scaled, horizon, NBEATSModel, cfg=config)
         print(f"Model evaluation completed in {elapsed_time:.2f} seconds.")
         print(f'smapes:', smapes)
